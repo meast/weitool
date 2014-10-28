@@ -115,17 +115,17 @@
     <div data-options="region:'east', split:true, border:true" style="width:320px;" class="<?=$this -> idprefix?>neast">
         <div id="wei-sim">
             <div id="wei-welcome" class="wei-rec">
-				<img src="<?=URL_BASE?>/static/images/weixin.jpeg" class="img-rounded wei-avatar">
+				<img src="<?=URL_BASE?>static/images/weixin.jpeg" class="img-rounded wei-avatar">
 				<div id="wei-wc" class="btn btn-success wei-content" data-options="fit:true">正在准备微信</div>
 				<div style="clear:both;"></div>
 			</div>
 			<div id="wei-posttext" class="wei-send">
-                <img src="<?=URL_BASE?>/static/images/noavatar_middle.gif" class="img-rounded wei-avatar">
+                <img src="<?=URL_BASE?>static/images/noavatar_middle.gif" class="img-rounded wei-avatar">
 				<div id="wei-wp" class="btn btn-success wei-content" data-options="fit:true">准备就绪</div>
 				<div style="clear:both;"></div>
 			</div>
 			<div id="wei-recv" class="wei-rec f-dn">
-				<img src="<?=URL_BASE?>/static/images/weixin.jpeg" class="img-rounded wei-avatar">
+				<img src="<?=URL_BASE?>static/images/weixin.jpeg" class="img-rounded wei-avatar">
 				<div id="wei-wr" class="btn btn-success wei-content" data-options="fit:true">正在准备微信</div>
 				<div style="clear:both;"></div>
 			</div>
@@ -219,7 +219,7 @@
                 jQuery("#m_img-2").show();
                 var _imgurl = jQuery("#imgurl").val();
                 var _imgid = jQuery("#imgid").val();
-                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>/static/images/noavatar_middle.gif" alt="" />');
+                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>static/images/noavatar_middle.gif" alt="" />');
                 xml += "    <MsgType><" + "![CDATA[image]]></" + "MsgType>\n";
                 xml += "    <PicUrl><" + "![CDATA[" + _imgurl + "]]></" + "PicUrl>\n";
                 xml += "    <MediaId><" + "![CDATA[" + _imgid + "]]></" + "MediaId>\n";
@@ -228,7 +228,7 @@
                 jQuery("#m_voice-1").show();
                 jQuery("#m_voice-2").show();
                 jQuery("#m_voice-3").show();
-                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>/static/images/voice.jpeg" alt="" />');
+                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>static/images/voice.jpeg" alt="" />');
                 var _voiceid = jQuery("#voiceid").val();
                 var _voiceformat = jQuery("#voiceformat").val();
                 var _voicetext = jQuery("#voicetext").val();
@@ -240,7 +240,7 @@
             if(type == "video") {
                 jQuery("#m_video-1").show();
                 jQuery("#m_video-2").show();
-                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>/static/images/video.jpeg" alt="" />');
+                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>static/images/video.jpeg" alt="" />');
                 var _videoid = jQuery("#videoid").val();
                 var _videopicid = jQuery("#videopicid").val();
                 xml += "    <MsgType><" + "![CDATA[video]]></" + "MsgType>\n";
@@ -248,7 +248,7 @@
                 xml += "    <ThumbMediaId><" + "![CDATA[" + _videopicid + "]]></" + "ThumbMediaId>\n";
             }
             if(type == "location") {
-                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>/static/images/location.jpeg" alt="" />');
+                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>static/images/location.jpeg" alt="" />');
                 jQuery("#m_location-1").show();
                 jQuery("#m_location-2").show();
                 jQuery("#m_location-3").show();
@@ -264,7 +264,7 @@
                 xml += "    <Lebel><" + "![CDATA[" + _locationinfo + "]]></" + "Lebel>\n";
             }
             if(type == "link") {
-                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>/static/images/link.jpeg" alt="" />');
+                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>static/images/link.jpeg" alt="" />');
                 jQuery("#m_link-1").show();
                 jQuery("#m_link-2").show();
                 jQuery("#m_link-3").show();
