@@ -1,0 +1,238 @@
+<?php
+    $this -> headcontent = '<style type="text/css">
+        .tabs-panels .panel { word-break:break-all;word-wrap:break-word; }
+        pre {
+                border: 2px solid #ccc; 
+                background-color: #eeeeff;
+                padding: 10px;
+                font-size: 11px;word-break:normal;word-wrap:break-word;white-space:pre-wrap;
+            }
+    </style>' . PHP_EOL;
+?>
+<div id="admin-index-index-maincontainer" class="easyui-layout" data-options="fit:true,border:false" style="width:100%">
+    <div data-options="region:'north',border:false" class="panel-body" style="height:30px;"></div>
+    <div data-options="region:'south',split:true,border:false" class="panel-body" style="height:30px;text-align:center"> Copyright &copy; <?=date('Y')?></div>
+    <div data-options="region:'east',split:true,collapsed:true" title="Shortcut" style="width:180px;">
+        <div><a href="<?=URL_BASE?>" target="_blank" class="easyui-linkbutton">主页</a></div>
+        <div><br /></div>
+        <div><a href="javascript:window.location.reload();" class="easyui-linkbutton">刷新</a></div>
+        <div><br /></div>
+    </div>
+    <div data-options="region:'west',split:true" title="Menu" style="width:220px;">
+        <div class="easyui-accordion" fit="true" border="false">
+            <div title="Wiki" data-options="iconCls:'icon-home'">
+                <ul id="wikimenu" class="easyui-tree" data-options="animate:true,dnd:true,onDblClick:function(node){
+                    $(this).tree(node.state === 'closed' ? 'expand' : 'collapse', node.target);
+                    node.state = node.state === 'closed' ? 'open' : 'closed';
+                }, url:'<?=Helper\Html::url(array('module'=>$this -> module, 'controller'=> $this -> controller, 'action'=>'wikimenu'))?>', onClick:function(node){ if(!node.attributes.haschild) {opentab(node.text, '<?=Helper\Html::url(array('module'=>$this -> module, 'controller'=> $this -> controller, 'action'=>'wiki'))?>?title=' + encodeURI(node.text))} },onContextMenu: function(e,node){ e.preventDefault(); $(this).tree('select', node.target);if(node.attributes.haschild){ $('#tm-00').menu('show', {left:e.pageX, top:e.pageY}); } else { $('#tm-01').menu('show', {left:e.pageX, top:e.pageY}); } }"></ul>
+            </div>
+            <div title="应用" data-options="iconCls:'icon-home'" style="padding:20px;">
+                <div><ul class="easyui-tree"><li>
+                <a class="ealink" href="<?=Helper\Html::url(array('module'=>$this -> module, 'controller'=> $this -> controller, 'action'=>'weisimulator'))?>">微信调试器</a></li></ul></div>
+            </div>
+            <div title="系统" data-options="iconCls:'icon-home'" style="padding:20px;">
+                <div>
+                    <div><a href="javascript:chgtheme('black');"  class="easyui-linkbutton">黑色</a></div>
+                    <div><a href="javascript:chgtheme('bootstrap');"  class="easyui-linkbutton">Bootstrap</a></div>
+                    <div><a href="javascript:chgtheme('default');" class="easyui-linkbutton">默认</a></div>
+                    <div><a href="javascript:chgtheme('gray');" class="easyui-linkbutton">灰色</a></div>
+                    <div><a href="javascript:chgtheme('metro');" class="easyui-linkbutton">Metro</a></div>
+                    <div><a href="<?=URL_BASE?>" target="_blank"  class="easyui-linkbutton">前台主页</a></div>
+                    <br />
+                    <div><a href="javascript:window.location.reload();"  class="easyui-linkbutton">刷新</a></div>
+                    <br />
+                    <div><a href="<?=Helper\Html::url(array('module'=>$this -> module, 'controller'=> $this -> controller, 'action'=>'logout'))?>" target="_top" class="easyui-linkbutton">注销</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center',iconCls:'icon-home',border:false">
+        <div id="admin-index-index-centercontainer" class="easyui-tabs" data-options="fit:true">
+            <div data-options="closable:false,iconCls:'icon-home',fit:true,href:'<?=Helper\Html::url(array('module'=>$this -> module, 'controller'=> $this -> controller, 'action'=>'weisimulator'))?>'" title="主页"></div>
+        </div>
+    </div>
+    <div id="admin-index-index-tabsmenu">
+        <div data-options="iconCls:'icon-reload'" name="reload">Refresh</div>
+        <div data-options="iconCls:'icon-cancel'" name="close">Close</div>
+        <div name="other">Close Other</div>
+        <div name="all">Close All</div>
+    </div>
+    <div id="tm-00" class="easyui-menu">
+        <div name="exp" onclick="expand00()" data-options="iconCls:'icon-add'">Expand</div>
+        <div name="close" onclick="collapse00()" data-options="iconCls:'icon-remove'">Collapse</div>
+    </div>
+    <div id="tm-01" class="easyui-menu">
+        <div name="oinw" onclick="oinw00()" data-options="iconCls:'icon-redo'">open in new window</div>
+        <div name="refresh" onclick="refresh00()" data-options="iconCls:'icon-reload'">Refresh</div>
+        <div name="close" onclick="close00()" data-options="iconCls:'icon-cancel'">Close</div>
+    </div>
+</div>
+<script type="text/javascript">
+    jQuery(function(){
+        buildTabs();
+        bingTabsMenuEvents();
+        
+        jQuery('.ealink').bind('click', function(){
+            var _txt = jQuery(this).text();
+            var _link = jQuery(this).attr('href');
+            if(_link && _link.substr(0, 11).toLowerCase() != 'javascript:') {
+                opentab(_txt, _link);
+            } else {
+            }
+            return false;
+        });
+        
+    });
+    
+    function buildTabs() {
+        jQuery("#admin-index-index-centercontainer").tabs({
+            onContextMenu: function (e, title) {
+                e.preventDefault();
+                jQuery("#admin-index-index-tabsmenu").menu('show', {
+                    left: e.pageX,
+                    top:e.pageY,
+                    fit:true
+                }).data("tabTitle", title);
+            }
+        });
+    }
+    
+    function bingTabsMenuEvents() {
+        jQuery("#admin-index-index-tabsmenu").menu({
+            onClick: function(item) { closetab(this, item.name); }
+        });
+    }
+    
+    function closetab(obj, name) {
+        var ctt = jQuery(obj).data("tabTitle");
+        var t = jQuery("#admin-index-index-centercontainer");
+        var ctab = t.tabs('getTab', ctt);
+        var ctabselected = t.tabs('getSelected');
+        if (name == "close") {
+            if (ctab.panel("options").closable) {
+                t.tabs("close", ctt);return;
+            } else {
+                //alert('not closable tabs.');
+            }
+        }
+        if (name == "reload") {
+            t.tabs("update", {
+                tab:ctab,
+                options: {
+                    title:ctab.panel("options").tab.title,
+                    href: ctab.panel("options").tab.href
+                }
+            });
+        }
+        var ats = t.tabs("tabs");
+        var closett = [];
+        jQuery.each(ats, function () {
+            var opt = jQuery(this).panel("options");
+            if (opt.closable && opt.title != ctt && name == "other") {
+                closett.push(opt.title);
+            } else if (opt.closable && name == "all") {
+                closett.push(opt.title);
+            }
+        });
+        for (var i = 0; i < closett.length; i++) {
+            t.tabs('close', closett[i]);
+        }
+    }
+    
+    function newtab(text, content) {
+        if (jQuery('#admin-index-index-centercontainer').tabs('exists', text)) {
+            jQuery('#admin-index-index-centercontainer').tabs('select', text);
+        } else {
+            jQuery('#admin-index-index-centercontainer').tabs('add', {
+                title: text,
+                closable: true,
+                content:content
+            });
+        }
+    }
+    
+    function opentab(text, url) {
+        if (jQuery('#admin-index-index-centercontainer').tabs('exists', text)) {
+            jQuery('#admin-index-index-centercontainer').tabs('select', text);
+        } else {
+            jQuery('#admin-index-index-centercontainer').tabs('add', {
+                title: text,
+                closable: true,
+                icon:'icon-save',
+                href:url
+            });
+            //$.parser.parse();
+        }
+    }
+    function showMsg(title, msg) {
+        $.messager.show({
+            title: title,
+            msg: msg,
+            showType: 'show'
+        });
+    }
+    
+    function chgtheme(tn) {
+        var _tcss = "<?=URL_BASE?>/static/js/easyui/themes/" + tn + "/easyui.css";
+        jQuery("#etheme").attr("href",_tcss);
+    }
+    
+    function tree_open(){
+        var _t = jQuery(".easyui-tree");
+        var _node = _t.tree('getSelected');
+        var _link = _node.attr('href');
+        var _txt = _node.html();
+        opentab(_txt, _link);
+        jQuery.parser.parse();
+    }
+    function tree_newopen(){
+        var _t = jQuery(".easyui-tree");
+        var _node = _t.tree('getSelected');
+        var _link = _node.attr('href');
+        var _txt = _node.html();
+        if(_link)
+        window.open(_link);
+    }
+    
+    function expand00(){
+        var node = jQuery("#wikimenu").tree('getSelected');
+        jQuery("#wikimenu").tree('expand', node.target);
+    }
+    
+    function collapse00(){
+        var node = jQuery("#wikimenu").tree('getSelected');
+        jQuery("#wikimenu").tree('collapse', node.target);
+    }
+    
+    function oinw00(){
+        var node = jQuery("#wikimenu").tree('getSelected');
+        if(node.attributes.haschild){}
+        else {
+            var _url = "<?=Helper\Html::url(array('module'=>$this -> module, 'controller'=> $this -> controller, 'action'=>'wiki'))?>?title=" + encodeURI(node.text);
+            if(node.attributes.url) _url = node.attributes.url;
+            open(_url);
+        }
+    }
+    
+    function refresh00(){
+        var node = jQuery("#wikimenu").tree('getSelected');
+        var _t = jQuery("#admin-index-index-centercontainer");
+        var _tab = _t.tabs('getTab', node.text);
+        var _url = "<?=Helper\Html::url(array('module'=>$this -> module, 'controller'=> $this -> controller, 'action'=>'wiki'))?>?title=" + encodeURI(node.text);
+        if(node.attributes.url) _url = node.attributes.url;
+        if(!_tab) opentab(node.text, _url);
+        else  _t.tabs('update', {tab:_tab, options:{href:_url}});
+    }
+    
+    function close00(){
+        var node = jQuery("#wikimenu").tree('getSelected');
+        var _t = jQuery("#admin-index-index-centercontainer");
+        var _tab = _t.tabs('getTab', node.text);
+        if(_tab){
+            if(_tab.panel("options").closable){
+                _t.tabs('close', node.text);return;
+            }
+        }
+    }
+    
+</script>

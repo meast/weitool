@@ -1,0 +1,423 @@
+<?php
+    $this -> headcontent = '' . PHP_EOL;
+?><style type="text/css">
+    a { text-decoration:none; }
+    img { vertical-align: middle;border:0 none; }
+    .img-rounded { border-radius: 6px; }
+    .btn { border:1px solid transparent;border-radius: 4px;cursor:pointer; display:inline-block;font-size: 14px;line-height:1.42857;vertical-align:middle;padding:6px 12px; }
+    .btn { box-sizing: content-box;white-space: normal; }
+    .btn-success { background-color:#5cb85c;border-color:#4cae4c;color:#fff; }
+    .wei-rec { text-align: left; padding:5px; }
+    .wei-rec .wei-avatar { width:34px;height:34px;margin-left:6px; float:left; }
+    .wei-rec .wei-content { margin-left: 4px;float: left;max-width: 200px;text-align:left; }
+    .wei-send { text-align:left; padding:5px; }
+    .wei-send .wei-avatar { width:34px;height:34px;margin-right:6px; float:right; }
+    .wei-send .wei-content { margin-right: 4px;float: right;max-width: 200px;text-align:left;background:#888; }
+    .f-dn { display:none; }
+    .f-fr { float:right; }
+    .f-fl { float:left; }
+    .frm-ctrl { width:90%;background:#fff;border:1px solid #ccc;border-radius:4px;box-shadow:0 1px 1px rgba(0,0,0,0.075) inset;color:#555;display:block;font-size:14px;line-height:1.5;padding:6px 12px;transition:border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s; }
+    .frm-ctrl:focus { border-color:#66afe9;box-shadow:0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6); }
+    .frm-ctrl[readonly], .frm-ctrl[disabled], input[readonly], textarea[readonly], input[disabled], textarea[disabled] { background-color:#eee;cursor:not-allowed;opacity:1; }
+    pre { background-color:#f5f5f5;border:1px solid #ccc;border-radius:4px;color:#333;display:block;font-size:13px;line-height:1.42857;margin:0 0 10px;padding:9.5px;word-break:break-all;word-wrap:break-word;white-space:pre-wrap; }
+    #receive { width:90%; }
+    .btn-primary { background-color:#428bca;border-color:#357ebd;color:#fff; }
+    .btn-warning { background-color:#f0ad4e;border-color:#eee236;color:#fff; }
+    #wei-recv2 { width:270px;border:1px solid #cdcdcd;box-shadow:0 3px 6px #999999;-webkit-border-radius:12px;-moz-border-radius:12px;border-radius:12px;background-color:#FFFFFF;background:-webkit-gradient(linear,left top,left bottom,from(#FFFFFF),to(#FFFFFF));background-image:-moz-linear-gradient(top,#FFFFFF 0%,#FFFFFF 100%);margin:4px auto 10px; }
+    #wei-recv2 .hd {}
+    #wei-recv2 .hd #wr2-title { line-height:1.2em;margin-top:22px;max-width:320px;text-align:left;font-size:20px;color:#000; }
+    #wei-recv2 .hd #wr2-title a { color:#333; }
+    #wei-recv2 .hd #wr2-time { font-size:12px;color:#8c8c8c;margin:21px 0 0; }
+    #wei-recv2 .bd {  }
+    #wei-recv2 .bd #wr2-img { width:255px;max-height:164px;margin:2px 15px;padding:0; }
+    #wei-recv2 .bd #wr2-img img { width:210px;max-height:164px;margin:2px 15px;padding:0; }
+    #wei-recv2 .bd #wr2-bd {  }
+    #wei-recv2 .bd #wr2-bd .wr2-nlist { width:260px;display:table;cursor:pointer;border-top:1px solid #ccc;margin:2px;padding:4px 6px;white-space:pre-wrap;word-break:break-all;font-size:14px; }
+    #wei-recv2 .bd #wr2-bd img { width:50px;height:50px; }
+    #wei-recv2 .ft { width:96%;line-height:50px;display:table;border-top:1px solid #ccc;cursor:pointer; }
+    #wei-recv2 .ft .msgicon { width:20px;height:20px;text-align:right;display:inline-block; }
+    #wei-recv2 .ft .viewall { line-height:50px; }
+</style>
+<div class="easyui-panel" data-options="fit:true">
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'center'" class="<?=$this -> idprefix?>ncenter">
+        <div>
+            <table style="width:100%">
+                <tr><td style="width:80px;"> </td><td>
+                    <input type="button" class="btn btn-primary" value="发送消息" onclick="senndmsg()" name="submit" />
+                    <input type="button" class="btn btn-warning" value="Token验证" onclick="checksignature()" name="submit" />
+                </td></tr>
+                <tr><td>URL</td><td><input type="text" name="url" id="url" class="frm-ctrl" value="" /></td></tr>
+                <tr><td>Token</td><td><input type="text" name="token" id="token" class="frm-ctrl" value="" /></td></tr>
+                <tr><td>消息类型</td><td>
+                    <div>
+                        <label id="type_subscribe"><input type="radio" name="type" id="type_subscribe" value="subscribe"/>关注</label>
+                        <label id="type_unsubscribe"><input type="radio" name="type" id="type_unsubscribe" value="unsubscribe"/>取消关注</label>
+                        <label id="type_other"><input type="radio" name="type" id="type_other" value="other"/>自定义XML</label>
+                    </div>
+                    <div>
+                        <label id="type_text"><input type="radio" name="type" id="type_text" value="text"/>文本</label>
+                        <label id="type_image"><input type="radio" name="type" id="type_image" value="image"/>图片</label>
+                        <label id="type_voice"><input type="radio" name="type" id="type_voice" value="voice"/>语音</label>
+                        <label id="type_video"><input type="radio" name="type" id="type_video" value="video"/>视频</label>
+                        <label id="type_location"><input type="radio" name="type" id="type_location" value="location"/>位置</label>
+                        <label id="type_link"><input type="radio" name="type" id="type_link" value="link"/>链接</label>
+                        <label id="type_menu"><input type="radio" name="type" id="type_menu" value="menu"/>菜单点击</label>
+                    </div>
+                </td></tr>
+                <tr><td>发送用户</td><td><input type="text" name="fromuser" id="fromuser" class="frm-ctrl" value="ojpX_jig-gyi3_Q9fHXQ" /></td></tr>
+                <tr><td>接收用户</td><td><input type="text" name="touser" id="touser" class="frm-ctrl" value="" /></td></tr>
+                <tr class="m-s" id="m_text"><td>内容</td><td>
+                <input type="text" name="contentvalue" id="contentvalue" class="frm-ctrl" value="笑话" /></td></tr>
+                
+                <tr class="m-s f-dn" id="m_menu"><td>事件KEY值</td><td>
+                <input type="text" name="eventkey" id="eventkey" class="frm-ctrl" value="笑话" /></td></tr>
+                
+                <tr class="m-s f-dn" id="m_img-1"><td>图片链接</td><td>
+                <input type="text" name="imgurl" id="imgurl" class="frm-ctrl" value="http://www.baidu.com/img/bdlogo.png" /></td></tr>
+                <tr class="m-s f-dn" id="m_img-2"><td>图片 ID</td><td>
+                <input type="text" name="imgid" id="imgid" class="frm-ctrl" value="DBVFRIj29LB2hxuYpc0R6VLyxwgyCHZPbRj_IIs6YaGhutyXUKtFSDcSCPeoqUYr" /></td></tr>
+                
+                <tr class="m-s f-dn" id="m_voice-1"><td>语音 ID</td><td>
+                <input type="text" name="voiceid" id="voiceid" class="frm-ctrl" value="hGm9wmKth8RO_tuv5k9fJkSbovXWzZVYwG2jSsL7ukCqq6q1SiLzYnFEngFNUijs" /></td></tr>
+                <tr class="m-s f-dn" id="m_voice-2"><td>语音格式</td><td>
+                <input type="text" name="voiceformat" id="voiceformat" class="frm-ctrl" value="amr" /></td></tr>
+                <tr class="m-s f-dn" id="m_voice-3"><td>语音识别</td><td>
+                <input type="text" name="voicetext" id="voicetext" class="frm-ctrl" value="明天佛山天气怎么样？" /></td></tr>
+                
+                <tr class="m-s f-dn" id="m_video-1"><td>视频 ID</td><td>
+                <input type="text" name="videoid" id="videoid" class="frm-ctrl" value="DBVFRIj29LB2hxuYpc0R6VLyxwgyCHZPbRj_IIs6YaGhutyXUKtFSDcSCPeoqUYr" /></td></tr>
+                <tr class="m-s f-dn" id="m_video-2"><td>缩略图 ID</td><td>
+                <input type="text" name="videopicid" id="videopicid" class="frm-ctrl" value="mxUJ5gcCeesJwx2T9qsk62YzIclCP_HnRdfTQcojlPeT2G9Q3d22UkSLyBFLZ01J" /></td></tr>
+                
+                <tr class="m-s f-dn" id="m_location-1"><td>X 坐标</td><td>
+                <input type="text" name="locationx" id="locationx" class="frm-ctrl" value="22.539968" /></td></tr>
+                <tr class="m-s f-dn" id="m_location-2"><td>Y 坐标</td><td>
+                <input type="text" name="locationy" id="locationy" class="frm-ctrl" value="113.954980" /></td></tr>
+                <tr class="m-s f-dn" id="m_location-3"><td>缩放大小</td><td>
+                <input type="text" name="locationzoom" id="locationzoom" class="frm-ctrl" value="20" /></td></tr>
+                <tr class="m-s f-dn" id="m_location-4"><td>位置信息</td><td>
+                <input type="text" name="locationinfo" id="locationinfo" class="frm-ctrl" value="中国广东省深圳市南山区华侨城深南大道9789号 邮政编码: 518057" /></td></tr>
+                
+                <tr class="m-s f-dn" id="m_link-1"><td>标题</td><td>
+                <input type="text" name="linktitle" id="linktitle" class="frm-ctrl" value="百度一下，你就知道" /></td></tr>
+                <tr class="m-s f-dn" id="m_link-2"><td>描述</td><td>
+                <input type="text" name="linkdesc" id="linkdesc" class="frm-ctrl" value="百度中文搜索引擎" /></td></tr>
+                <tr class="m-s f-dn" id="m_link-3"><td>链接</td><td>
+                <input type="text" name="linkurl" id="linkurl" class="frm-ctrl" value="http://www.baidu.com/" /></td></tr>
+                
+                
+                <tr><td>发送消息</td><td><textarea name="sendxml" id="sendxml" rows="6" cols="50" readonly="readonly" class="frm-ctrl"></textarea></td></tr>
+                <tr><td>接收消息</td><td><pre id="receive"></pre></td></tr>
+            </table>
+        </div>
+    </div>
+    <div data-options="region:'east', split:true, border:true" style="width:320px;" class="<?=$this -> idprefix?>neast">
+        <div id="wei-sim">
+            <div id="wei-welcome" class="wei-rec">
+				<img src="<?=URL_BASE?>/static/images/weixin.jpeg" class="img-rounded wei-avatar">
+				<div id="wei-wc" class="btn btn-success wei-content" data-options="fit:true">正在准备微信</div>
+				<div style="clear:both;"></div>
+			</div>
+			<div id="wei-posttext" class="wei-send">
+                <img src="<?=URL_BASE?>/static/images/noavatar_middle.gif" class="img-rounded wei-avatar">
+				<div id="wei-wp" class="btn btn-success wei-content" data-options="fit:true">准备就绪</div>
+				<div style="clear:both;"></div>
+			</div>
+			<div id="wei-recv" class="wei-rec f-dn">
+				<img src="<?=URL_BASE?>/static/images/weixin.jpeg" class="img-rounded wei-avatar">
+				<div id="wei-wr" class="btn btn-success wei-content" data-options="fit:true">正在准备微信</div>
+				<div style="clear:both;"></div>
+			</div>
+			<div id="wei-recv2" class="wei-rec f-dn">
+                <div class="hd">
+                    <div id="wr2-title"></div>
+                    <div id="wr2-time"></div>
+                </div>
+                <div class="bd">
+                    <div id="wr2-img"></div>
+                    <div id="wr2-bd"></div>
+                </div>
+                <div class="ft f-cb" id="wr2-ft">
+                    <div class="msgicon f-fr"> &gt; </div>
+                    <div class="viewall f-fl">查看全文</div>
+                </div>
+			</div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript">
+    var _verifyurl = "<?=Helper\Html::url(array('module'=>$this -> module, 'controller'=> $this -> controller, 'action'=>'simurl'))?>?act=verify";
+    var _sendurl = "<?=Helper\Html::url(array('module'=>$this -> module, 'controller'=> $this -> controller, 'action'=>'simurl'))?>?act=send";
+    $(function(){
+        jQuery("input[name='type']").bind("click", function(){ var _val = jQuery(this).val();toggle(_val); });
+        jQuery("input[value='text']").trigger("click");
+        jQuery("#wr2-ft").bind("click", function(){
+            var _url = jQuery("#wr2-ft").data("url");
+            if(_url) window.open(_url, "_blank");
+        });
+    });
+    
+    function opensvurl() {
+        var href = jQuery("#svurl").attr("href");
+        window.open(href, "_blank");
+    }
+    
+    function popensvurl(href) {
+        if(href) window.open(href, "_blank");
+    }
+    
+    function getxml(xml){
+		var xmlobject = null;
+		try{
+			if(window.ActiveXObject){
+				xmlobject =new ActiveXObject("Microsoft.XMLDOM");
+				xmlobject.async="false";
+				xmlobject.loadXML(xml);
+			}else{// 用于 Mozilla, Firefox, Opera, 等浏览器的代码：
+			   var parser=new DOMParser();
+			   xmlobject =parser.parseFromString(xml,"text/xml");
+			}
+		}catch(e){alert("您的浏览器不支持模拟测试");}
+		return xmlobject;
+	}
+    
+    function toggle(type) {
+        curtype = type;
+        jQuery(".content_type").hide();
+        //jQuery("#" + curtype).show();
+        jQuery("#receive").text("");
+        buildRequest(type);
+        jQuery("#sendxml").attr("readonly", "readonly");
+        if(type == "other") {
+            jQuery("#sendxml").removeAttr("readonly");
+        }
+    }
+    
+    function buildRequest(type) {
+        jQuery(".m-s").hide();
+        jQuery("#wei-posttext").hide();
+        jQuery("#wei-recv").hide();
+        var time0 = new Date().getTime();
+        var time = Math.round(time0/1000);
+        var xml = "<xml>\n" +
+            "    <ToUserName><" + "![CDATA[" + jQuery("#touser").val() + "]]><" + "/" + "ToUserName>\n" +
+            "    <FromUserName><" + "![CDATA[" + jQuery("#fromuser").val() + "]]></" + "FromUserName>\n" +
+            "    <CreateTime>" + time + "</" + "CreateTime>\n";
+            
+            if(type == "text") {
+                jQuery("#m_text").show();
+                xml += "    <MsgType><" + "![CDATA[text]]></" + "MsgType>\n";
+                var _content = jQuery("#contentvalue").val();
+                xml += "    <Content><" + "![CDATA[" + _content + "]]></" + "Content>\n";
+                jQuery("#wei-wp").text("");
+                jQuery("#wei-wp").text(_content);
+            }
+            if(type == "image") {
+                jQuery("#m_img-1").show();
+                jQuery("#m_img-2").show();
+                var _imgurl = jQuery("#imgurl").val();
+                var _imgid = jQuery("#imgid").val();
+                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>/static/images/noavatar_middle.gif" alt="" />');
+                xml += "    <MsgType><" + "![CDATA[image]]></" + "MsgType>\n";
+                xml += "    <PicUrl><" + "![CDATA[" + _imgurl + "]]></" + "PicUrl>\n";
+                xml += "    <MediaId><" + "![CDATA[" + _imgid + "]]></" + "MediaId>\n";
+            }
+            if(type == "voice") {
+                jQuery("#m_voice-1").show();
+                jQuery("#m_voice-2").show();
+                jQuery("#m_voice-3").show();
+                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>/static/images/voice.jpeg" alt="" />');
+                var _voiceid = jQuery("#voiceid").val();
+                var _voiceformat = jQuery("#voiceformat").val();
+                var _voicetext = jQuery("#voicetext").val();
+                xml += "    <MsgType><" + "![CDATA[voice]]></" + "MsgType>\n";
+                xml += "    <MediaId><" + "![CDATA[" + _voiceid + "]]></" + "MediaId>\n";
+                xml += "    <Format><" + "![CDATA[" + _voiceformat + "]]></" + "Format>\n";
+                xml += "    <Recognition><" + "![CDATA[" + _voicetext + "]]></" + "Recognition>\n";
+            }
+            if(type == "video") {
+                jQuery("#m_video-1").show();
+                jQuery("#m_video-2").show();
+                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>/static/images/video.jpeg" alt="" />');
+                var _videoid = jQuery("#videoid").val();
+                var _videopicid = jQuery("#videopicid").val();
+                xml += "    <MsgType><" + "![CDATA[video]]></" + "MsgType>\n";
+                xml += "    <MediaId><" + "![CDATA[" + _videoid + "]]></" + "MediaId>\n";
+                xml += "    <ThumbMediaId><" + "![CDATA[" + _videopicid + "]]></" + "ThumbMediaId>\n";
+            }
+            if(type == "location") {
+                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>/static/images/location.jpeg" alt="" />');
+                jQuery("#m_location-1").show();
+                jQuery("#m_location-2").show();
+                jQuery("#m_location-3").show();
+                jQuery("#m_location-4").show();
+                var _locationx = jQuery("#locationx").val();
+                var _locationy = jQuery("#locationy").val();
+                var _locationzoom = jQuery("#locationzoom").val();
+                var _locationinfo = jQuery("#locationinfo").val();
+                xml += "    <MsgType><" + "![CDATA[location]]></" + "MsgType>\n";
+                xml += "    <Location_X>" + _locationx + "</" + "Location_X>\n";
+                xml += "    <Location_Y>" + _locationy + "</" + "Location_Y>\n";
+                xml += "    <Scale><" + "![CDATA[" + _locationzoom + "]]></" + "Scale>\n";
+                xml += "    <Lebel><" + "![CDATA[" + _locationinfo + "]]></" + "Lebel>\n";
+            }
+            if(type == "link") {
+                jQuery("#wei-wp").html('<img src="<?=URL_BASE?>/static/images/link.jpeg" alt="" />');
+                jQuery("#m_link-1").show();
+                jQuery("#m_link-2").show();
+                jQuery("#m_link-3").show();
+                var _linktitle = jQuery("#linktitle").val();
+                var _linkdesc = jQuery("#linkdesc").val();
+                var _linkurl = jQuery("#linkurl").val();
+                 xml += "    <MsgType><" + "![CDATA[link]]></" + "MsgType>\n";
+                 xml += "    <Title><" + "![CDATA[" + _linktitle + "]]></" + "Title>\n";
+                 xml += "    <Description><" + "![CDATA[" + _linkdesc + "]]></" + "Description>\n";
+                 xml += "    <Url><" + "![CDATA[" + _linkurl + "]]></" + "Url>\n";
+            }
+            if(type == "subscribe") {
+                xml += "    <MsgType><" + "![CDATA[event]]></" + "MsgType>\n";
+                xml += "    <Event><" + "![CDATA[subscribe]]></" + "Event>\n";
+                xml += "    <EventKey><" + "![CDATA[]]></" + "EventKey>\n";
+            }
+            if(type == "unsubscribe") {
+                xml += "    <MsgType><" + "![CDATA[event]]></" + "MsgType>\n";
+                xml += "    <Event><" + "![CDATA[unsubscribe]]></" + "Event>\n";
+                xml += "    <EventKey><" + "![CDATA[]]></" + "EventKey>\n";
+            }
+            if(type == "menu") {
+                jQuery("#m_menu").show();
+                xml += "    <MsgType><" + "![CDATA[event]]></" + "MsgType>\n";
+                xml += "    <Event><" + "![CDATA[CLICK]]></" + "Event>\n";
+                var _ek = jQuery("#eventkey").val();
+                xml += "    <EventKey><" + "![CDATA[" + _ek + "]]></" + "EventKey>\n";
+            }
+            
+            xml += "    <MsgId>" + time0 + "</MsgId>\n" + "</xml>";
+            jQuery("#sendxml").val(xml);
+    }
+    
+    function checksignature() {
+        var _mpurl = jQuery("#url").val();
+        var _mptoken = jQuery("#token").val();
+        jQuery.ajax(_verifyurl, {
+            type:"POST",
+            dataType:"json",
+            data:{
+                "mpurl":_mpurl,
+                "mptoken":_mptoken
+            },
+            beforeSend: function(){
+                if(_mpurl == "" || _mptoken == "") {
+                    alert("接口URL或Token未填写");return;
+                }/*
+                if(mptoken.substring(0, 7) != "http://") {
+                    alert("接口URL需要以http://开头");
+                    return;
+                }*/
+                
+            },
+            success: function(s) {
+                if(s.status == "1") alert("Token 校验成功");
+                else alert("Token 校验失败");
+                return;
+            },
+            error: function() {
+                alert("接口无响应或超时！");
+            },
+            timeout: 5000
+        });
+    }
+    
+    function senndmsg() {
+        buildRequest(curtype);
+        var _mpurl = jQuery("#url").val();
+        var _mptoken = jQuery("#token").val();
+        var _mpxml = jQuery("#sendxml").val().replace(/[\r\n]/g, "");
+        jQuery.ajax(_sendurl, {
+            type:"POST",
+            dataType:"text",
+            data:{
+                "mpurl":_mpurl,
+                "mptoken":_mptoken,
+                "mpxml":_mpxml
+            },
+            beforeSend: function(){
+                jQuery("#wei-recv2").hide();
+                jQuery("#wr2-ft").removeData("url");
+                if(_mpurl == "" || _mptoken == "") {
+                    alert("接口URL或Token未填写");return;
+                }
+                if(curtype != "subscribe" && curtype != "unsubscribe") {
+                    if(curtype == "text" || curtype == "image" || curtype == "voice" || curtype == "video" || curtype == "link" || curtype == "location") {
+                        jQuery("#wei-posttext").show();
+                    }
+                }
+                jQuery("#wei-recv").hide();
+                jQuery("#receive").text("加载中。。。");
+            },
+            success: function(s) {
+                jQuery("#receive").text(s);
+                var xmlobject = getxml(s);
+                if(xmlobject) {
+                    var xmlobj = xmlobject.getElementsByTagName("xml");
+                    if(xmlobj.length) {
+                        var xmls = xmlobj.item(0);
+                        var xml = xmls;
+                        var FromUserName = xml.getElementsByTagName("FromUserName")[0].firstChild.nodeValue;
+                        var ToUserName = xml.getElementsByTagName("ToUserName")[0].firstChild.nodeValue;
+                        var MsgType = xml.getElementsByTagName("MsgType")[0].firstChild.nodeValue;
+                        if(MsgType == "text") {
+                            var Content = xml.getElementsByTagName("Content")[0].firstChild.nodeValue;
+                            Content = nl2br(Content);
+                            jQuery("#wei-wr").text(Content);
+                            jQuery("#wei-recv").show();
+                        }
+                        if(MsgType == "news") {
+                            jQuery("#wr2-title").html("");
+                            jQuery("#wr2-img").html("");
+                            var Title = xml.getElementsByTagName("Title")[0].firstChild.nodeValue;
+                            var Description = xml.getElementsByTagName("Description")[0].firstChild.nodeValue;
+                            var PicUrl = xml.getElementsByTagName("PicUrl")[0].firstChild.nodeValue;
+                            var Url = xml.getElementsByTagName("Url")[0].firstChild.nodeValue;
+                            if(Url.indexOf("http://") == -1 && Url.indexOf("https://") == -1) Url = "../" + Url;
+                            jQuery("#wr2-title").html('<a href="' + Url + '" target="_blank">' + Title + '</a>');
+                            if(PicUrl != "") jQuery("#wr2-img").html('<a href="' + Url + '" target="_blank"><img src="' + PicUrl + '" alt="" /></a>');
+                            var titleObj = xml.getElementsByTagName("Title");
+                            if(Url != "") jQuery("#wr2-ft").data("url", Url);
+                            if(titleObj.length > 1) {
+                                var _contentlist = _imghtml = '';
+                                var UrlObj = xml.getElementsByTagName("Url");
+                                var PicUrlObj = xml.getElementsByTagName("PicUrl");
+                                for(var ti = 1; ti < titleObj.length; ti++) {
+                                    var _imgti = PicUrlObj[ti].firstChild.nodeValue;
+                                    _imghtml = _imgti ? '<img align="right" src="' + _imgti + '" alt="" />' : '';
+                                    var _urlti = UrlObj[ti].firstChild.nodeValue;
+                                    var _titleti = titleObj[ti].firstChild.nodeValue;
+                                    if(_urlti == "")
+                                        _contentlist += '<div class="wr2-nlist f-cb">' + _titleti + _imghtml + '</div>';
+                                    else {
+                                        _contentlist += '<div class="wr2-nlist f-cb"><a href="" target="_blank">';
+                                        _contentlist += _titleti + _imghtml + '</a></div>';
+                                    }
+                                }
+                                jQuery("#wr2-bd").html(_contentlist);
+                            }
+                            jQuery("#wei-recv2").show();
+                        }
+                    }
+                }
+            },
+            error: function() {
+                alert("接口无响应或超时！");
+            },
+            timeout: 5000
+        });
+    }
+    
+    function nl2br(str, is_xhtml) {
+        var btag = (is_xhtml || typeof is_xhtml === "undefined") ? "<br " + "/>" : "<br>";
+        return (str + "").replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, "$1" + btag + "$2");
+    }
+</script>
